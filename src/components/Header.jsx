@@ -30,13 +30,19 @@ function Header() {
   };
 
   return (
-    <Box as="header" w="100%" bg="teal.500" color="white" px={4} py={2} boxShadow="md" position="sticky" top={0} zIndex={1000}>
+  <Box as="header" w="100%" bg="primary.500" color="white.500" px={4} py={2} boxShadow="md" position="sticky" top={0} zIndex={1000}>
       <Flex align="center" justify="space-between">
         <Heading as="h1" size="md">{teamName || 'Amazing Race'}</Heading>
         <Flex align="center" gap={2}>
-          <Box fontSize="sm" color={online ? 'green.200' : 'red.200'}>
-            {online ? 'Online' : 'Offline'}
-          </Box>
+          {online ? (
+                <Box as="span" title="Online">
+                  <Box as="span" display="inline-block" w={4} h={4} borderRadius="full" bg="trafficGreen.500" mr={2} border="1px solid" borderColor="white.500" />
+                </Box>
+          ) : (
+                <Box as="span" title="Offline">
+                  <Box as="span" display="inline-block" w={4} h={4} borderRadius="full" bg="trafficRed.500" mr={2} border="1px solid" borderColor="white.500" />
+                </Box>
+          )}
           <IconButton
             icon={<HamburgerIcon />}
             variant="ghost"
@@ -48,20 +54,20 @@ function Header() {
       </Flex>
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
+        <DrawerContent bg="lightGrey.500">
+          <DrawerHeader borderBottomWidth="1px" bg="primary.500" color="white.500">Menu</DrawerHeader>
           <DrawerBody>
             <VStack align="start" spacing={4}>
               <Flex align="center" gap={2} as={RouterLink} to="/" onClick={onClose}>
-                <AtSignIcon />
+                <AtSignIcon color="primary.500" />
                 <Box as="span">Home</Box>
               </Flex>
-              <Flex align="center" gap={2} as={RouterLink} to="/about" onClick={onClose}>
-                <InfoIcon />
-                <Box as="span">About</Box>
-              </Flex>
+                <Flex align="center" gap={2} as={RouterLink} to="/tasks" onClick={onClose}>
+                  <InfoIcon color="yellow.500" />
+                  <Box as="span">Tasks</Box>
+                </Flex>
               <Flex align="center" gap={2} as={RouterLink} to="/login" onClick={() => { handleLogout(); onClose(); }}>
-                <UnlockIcon />
+                <UnlockIcon color="primary.500" />
                 <Box as="span">Logout</Box>
               </Flex>
               {/* Add more menu items here */}

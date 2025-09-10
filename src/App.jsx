@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import Layout from './components/Layout';
 import Login from './components/Login';
 import About from './components/About';
+import TaskPage from './components/TaskPage';
+import TasksList from './components/TasksList';
 import { useUserStore } from './stores/userStore';
 import { useTasksStore } from './stores/tasksStore';
 import { useSubmissionsStore } from './stores/submissionsStore';
@@ -48,7 +50,8 @@ function App() {
             <>
               <Route path="/" element={<About />} />
               <Route path="/about" element={<About />} />
-              {/* Add more authenticated routes here */}
+              <Route path="/task/:id" element={<TaskPage />} />
+              <Route path="/tasks" element={<TasksList />} />
             </>
           )}
         </Routes>

@@ -54,7 +54,7 @@ function Login() {
   }
 
   return (
-    <Box maxW="md" mx="auto" mt={0} p={8} borderWidth={1} borderRadius="lg" boxShadow="md">
+  <Box maxW="md" mx="auto" mt={0} p={8} borderWidth={1} borderRadius="lg" boxShadow="md" bg="white.500">
       <VStack spacing={6}>
         <Heading as="h2" size="lg">Login</Heading>
         <FormControl id="email">
@@ -68,10 +68,10 @@ function Login() {
         <Checkbox isChecked={rememberMe} onChange={e => setRememberMe(e.target.checked)}>
           Remember Me
         </Checkbox>
-        <Button colorScheme="teal" isLoading={loading} onClick={handleLogin} width="full">
+        <Button bg="primary.500" color="white.500" _hover={{ bg: 'orange.500' }} isLoading={loading} onClick={handleLogin} width="full">
           Login
         </Button>
-        {error && <Box color="red.500">{error}</Box>}
+        {error && <Box color="softRed.500">{error}</Box>}
       </VStack>
     </Box>
   );
