@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Box, Button, Input, FormControl, FormLabel, Heading, VStack } from '@chakra-ui/react';
+import { Box, Button, Input, Heading, VStack } from '@chakra-ui/react';
+import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './firebase';
+import { auth } from '../firebase';
 
 function Login() {
   const [email, setEmail] = useState('');
