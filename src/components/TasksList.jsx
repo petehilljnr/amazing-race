@@ -1,27 +1,45 @@
-import { Box, Heading, VStack, Text, Link } from '@chakra-ui/react';
+import { Box, Heading, VStack, Text, Link, Icon } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
+import { MdHourglassEmpty, MdCheckBoxOutlineBlank, MdDoneAll, MdClose } from 'react-icons/md';
+
 import { useTasksStore } from '../stores/tasksStore';
+import { useSubmissionsStore } from '../stores/submissionsStore';
 
 function TasksList() {
   const tasks = useTasksStore(state => state.tasks);
+  const submissions = useSubmissionsStore(state => state.submissions);
+
 
   return (
-    <Box maxW="md" mx="auto" mt={1} p={5} borderWidth={1} borderRadius="lg" boxShadow="md" bg="white.500">
-      <VStack align="stretch" spacing={4}>
-        {tasks.length === 0 ? (
-          <Text color="midGrey.500">No tasks available.</Text>
-        ) : (
-          tasks.map(task => (
-            <Box key={task.id} p={4} borderWidth={1} borderRadius="md" bg="paleGrey.500">
-              <Link as={RouterLink} to={`/task/${task.id}`} color="primary.500" fontWeight="bold">
+    <VStack align="stretch" spacing={2} pb={2}>
+      {tasks.length === 0 ? (
+        <Text color="midGrey.500">No tasks available.</Text>
+      ) : (
+        tasks.map(task => {
+          const submission = submissions.find(sub => sub.taskId === task.id);
+          const status = submission ? submission.status : 'none';
+          let statusIcon = null;
+          if (status === 'pending') {
+            statusIcon = <Icon as={MdHourglassEmpty} color="yellow.500" boxSize={6} mr={2} />;
+          } else if (status === 'none') {
+            statusIcon = <Icon as={MdCheckBoxOutlineBlank} color="midGrey.500" boxSize={6} mr={2} />;
+          } else if (status === 'correct') {
+            statusIcon = <Icon as={MdDoneAll} color="green.500" boxSize={6} mr={2} />;
+          } else if (status === 'wrong') {
+            statusIcon = <Icon as={MdClose} color="softRed.500" boxSize={6} mr={2} />;
+          }
+          return (
+            <Box key={task.id} p={3} borderRadius="md" bg="paleGrey.500">
+              <Link as={RouterLink} to={`/task/${task.id}`} color="primary.500" fontWeight="bold" display="flex" alignItems="center">
+                {statusIcon}
                 {task.name || 'Untitled Task'}
               </Link>
               <Text fontSize="sm" color="black.500">{task.description || 'No description provided.'}</Text>
             </Box>
-          ))
-        )}
-      </VStack>
-    </Box>
+          );
+        })
+      )}
+    </VStack>
   );
 }
 

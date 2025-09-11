@@ -8,7 +8,7 @@ function TaskPage() {
 
   if (!task) {
     return (
-      <Box maxW="md" mx="auto" mt={10} p={8} borderWidth={1} borderRadius="lg" boxShadow="md" bg="lightGrey.500">
+      <Box maxW="md" mx="auto" mt={1} p={5} borderWidth={1} borderRadius="lg" boxShadow="md" bg="lightGrey.500">
         <Heading size="md" color="softRed.500">Task not found</Heading>
         <Text mt={4}>No task exists for ID: {id}</Text>
       </Box>
@@ -16,9 +16,9 @@ function TaskPage() {
   }
 
   return (
-    <Box maxW="md" mx="auto" mt={10} p={8} borderWidth={1} borderRadius="lg" boxShadow="md" bg="white.500">
+    <Box maxW="md" mx="auto" mt={1} mb={1} p={5} pb={5} borderWidth={1} borderRadius="lg" boxShadow="md" bg="white.500">
       <VStack align="start" spacing={4}>
-        <Heading size="lg" color="primary.500">{task.title || 'Untitled Task'}</Heading>
+        <Heading size="lg" color="primary.500">{task.name || 'Untitled Task'}</Heading>
         <Text fontSize="md" color="midGrey.500">{task.description || 'No description provided.'}</Text>
         {/* Add more task details here as needed */}
       </VStack>
