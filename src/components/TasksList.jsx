@@ -1,6 +1,7 @@
 import { Box, Heading, VStack, Text, Link, Icon } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { MdHourglassEmpty, MdCheckBoxOutlineBlank, MdDoneAll, MdClose } from 'react-icons/md';
+import { MdNotStarted } from 'react-icons/md';
 
 import { useTasksStore } from '../stores/tasksStore';
 import { useSubmissionsStore } from '../stores/submissionsStore';
@@ -22,7 +23,7 @@ function TasksList() {
           if (status === 'pending') {
             statusIcon = <Icon as={MdHourglassEmpty} color="yellow.500" boxSize={6} mr={2} />;
           } else if (status === 'none') {
-            statusIcon = <Icon as={MdCheckBoxOutlineBlank} color="midGrey.500" boxSize={6} mr={2} />;
+              statusIcon = <Icon as={MdNotStarted} color="midGrey.500" boxSize={6} mr={2} />;
           } else if (status === 'correct') {
             statusIcon = <Icon as={MdDoneAll} color="green.500" boxSize={6} mr={2} />;
           } else if (status === 'wrong') {
