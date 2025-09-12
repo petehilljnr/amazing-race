@@ -1,11 +1,42 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { get, set, del } from 'idb-keyval';
+import Dexie from 'dexie';
 
-const idbStorage = {
-  getItem: async (name) => await get(name),
-  setItem: async (name, value) => await set(name, value),
-  removeItem: async (name) => await del(name),
+// Create Dexie database
+const db = new Dexie('AmazingRaceDB');
+db.version(1).stores({
+  submissions: '++id',
+  queuedSubmissions: '++id',
+});
+
+const dexieStorage = {
+  getItem: async (name) => {
+    if (name === 'submissions') {
+      return await db.submissions.toArray();
+    }
+    if (name === 'queuedSubmissions') {
+      return await db.queuedSubmissions.toArray();
+    }
+    return null;
+  },
+  setItem: async (name, value) => {
+    if (name === 'submissions') {
+      await db.submissions.clear();
+      await db.submissions.bulkAdd(value);
+    }
+    if (name === 'queuedSubmissions') {
+      await db.queuedSubmissions.clear();
+      await db.queuedSubmissions.bulkAdd(value);
+    }
+  },
+  removeItem: async (name) => {
+    if (name === 'submissions') {
+      await db.submissions.clear();
+    }
+    if (name === 'queuedSubmissions') {
+      await db.queuedSubmissions.clear();
+    }
+  },
 };
 
 export const useSubmissionsStore = create(
@@ -20,7 +51,7 @@ export const useSubmissionsStore = create(
     }),
     {
       name: 'submissions-store',
-      getStorage: () => idbStorage,
+      getStorage: () => dexieStorage,
     }
   )
 );
