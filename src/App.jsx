@@ -5,6 +5,7 @@ import Login from './components/Login';
 import About from './components/About';
 import TaskPage from './components/TaskPage';
 import TasksList from './components/TasksList';
+import SubmissionsPage from './components/SubmissionsPage';
 import { useUserStore } from './stores/userStore';
 import { useTasksStore } from './stores/tasksStore';
 import { useSubmissionsStore } from './stores/submissionsStore';
@@ -52,6 +53,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/task/:id" element={<TaskPage />} />
               <Route path="/tasks" element={<TasksList />} />
+              <Route path="/submissions" element={<SubmissionsPage />} />
             </>
           )}
         </Routes>

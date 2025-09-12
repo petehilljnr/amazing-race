@@ -29,13 +29,47 @@ function TasksList() {
           } else if (status === 'wrong') {
             statusIcon = <Icon as={MdClose} color="softRed.500" boxSize={6} mr={2} />;
           }
+
+          // Score logic
+          let score = task.points;
+          if (score === undefined || score === null) score = 1;
+          let scoreColor = 'orange.700'; // bronze (<=2)
+          if (score >= 4 && score <= 6) scoreColor = 'gray.400'; // silver (3-6)
+          if (score >= 7) scoreColor = 'yellow.400'; // gold (7+)
+
           return (
-            <Box key={task.id} p={3} borderRadius="md" bg="paleGrey.500">
-              <Link as={RouterLink} to={`/task/${task.id}`} color="primary.500" fontWeight="bold" display="flex" alignItems="center">
-                {statusIcon}
-                {task.name || 'Untitled Task'}
-              </Link>
-              <Text fontSize="sm" color="black.500">{task.description || 'No description provided.'}</Text>
+            <Box key={task.id} p={3} borderRadius="md" bg="paleGrey.500" position="relative">
+              <Box
+                position="absolute"
+                top={3}
+                right={3}
+                zIndex={1}
+                display="flex"
+                alignItems="center"
+              >
+                <Box
+                  borderRadius="full"
+                  bg={scoreColor}
+                  color="white"
+                  minW={8}
+                  h={8}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  fontWeight="bold"
+                  fontSize="md"
+                  boxShadow="md"
+                >
+                  {score}
+                </Box>
+              </Box>
+              <Box flex="1">
+                <Link as={RouterLink} to={`/task/${task.id}`} color="primary.500" fontWeight="bold" display="flex" alignItems="center">
+                  {statusIcon}
+                  {task.name || 'Untitled Task'}
+                </Link>
+                <Text fontSize="sm" color="black.500" mt={1}>{task.description || 'No description provided.'}</Text>
+              </Box>
             </Box>
           );
         })

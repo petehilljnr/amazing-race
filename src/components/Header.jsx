@@ -66,6 +66,10 @@ function Header() {
                   <InfoIcon color="yellow.500" />
                   <Box as="span">Tasks</Box>
                 </Flex>
+                <Flex align="center" gap={2} as={RouterLink} to="/submissions" onClick={onClose}>
+                  <InfoIcon color="blue.500" />
+                  <Box as="span">Submissions</Box>
+                </Flex>
               <Flex align="center" gap={2} as={RouterLink} to="/login" onClick={() => { handleLogout(); onClose(); }}>
                 <UnlockIcon color="primary.500" />
                 <Box as="span">Logout</Box>
