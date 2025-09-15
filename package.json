@@ -17,6 +17,7 @@
     "@emotion/styled": "^11.14.1",
     "browser-image-compression": "^2.0.2",
     "dexie": "^4.2.0",
+    "dexie-react-hooks": "^4.2.0",
     "firebase": "^12.2.1",
     "framer-motion": "^10.18.0",
     "heic2any": "^0.0.4",

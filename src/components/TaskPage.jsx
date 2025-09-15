@@ -113,7 +113,7 @@ function TaskPage() {
     markerPos && userPos
       ? getDistanceMeters(markerPos[0], markerPos[1], userPos[0], userPos[1])
       : null;
-  console.log(userAnswer);
+
 
   // Example: get teamId and taskId from props, store, or context
   // For demonstration, assuming taskId from task.id and teamId from userStore
