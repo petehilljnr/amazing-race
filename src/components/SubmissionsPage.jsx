@@ -1,10 +1,16 @@
 import { Box, Heading, VStack, Text, Badge, Icon } from '@chakra-ui/react';
 import { MdHourglassEmpty, MdDoneAll, MdClose, MdNotStarted } from 'react-icons/md';
 import { useSubmissionsStore } from '../stores/submissionsStore';
+import { useLiveQuery } from 'dexie-react-hooks';
+import queuedDb from '../stores/queuedSubmissions';
 
 function SubmissionsPage() {
   const submissions = useSubmissionsStore(state => state.submissions);
-  const queuedSubmissions = useSubmissionsStore(state => state.queuedSubmissions);
+  const queuedSubmissions = useLiveQuery(
+    async () => await queuedDb.queuedSubmissions.toArray(),
+    [],
+    []
+  );
 
   return (
     <>
