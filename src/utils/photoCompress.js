@@ -5,10 +5,10 @@ import imageCompression from 'browser-image-compression';
 /**
  * Compresses an image file (including HEIC) and converts it to a base64 string.
  * @param {File} file - The image file from input.
- * @param {number} maxSizeKB - Maximum size in KB (default 100).
+ * @param {number} maxSizeKB - Maximum size in KB (default 250).
  * @returns {Promise<File>} - Compressed image file.
  */
-export async function prepareImage(file, maxSizeKB = 100) {
+export async function prepareImage(file, maxSizeKB = 500) {
   let convertedFile = file;
 
   // Convert HEIC to JPEG if needed
@@ -25,7 +25,7 @@ export async function prepareImage(file, maxSizeKB = 100) {
   // Compress the image
   const options = {
     maxSizeMB: maxSizeKB / 1024,
-    maxWidthOrHeight: 1024,
+    //maxWidthOrHeight: 1024,
     useWebWorker: true,
   };
 

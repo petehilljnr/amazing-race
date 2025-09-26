@@ -10,6 +10,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
+import { useLiveLocation } from "../utils/location";
 import L from "leaflet";
 import crosshairSvg from "../assets/crosshair.svg";
 import { getDistanceMeters } from "../utils/distance";
@@ -40,22 +41,10 @@ function TaskPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const task = useTasksStore((state) => state.tasks.find((t) => t.id === id));
-  const [userLocation, setUserLocation] = useState(null);
+  const userLocation = useLiveLocation({ enableHighAccuracy: true });
   const [userAnswer, setUserAnswer] = useState("");
   const teamId = useUserStore((state) => state.teamId);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) =>
-          setUserLocation({
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          }),
-        () => setUserLocation(null)
-      );
-    }
-  }, []);
 
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
