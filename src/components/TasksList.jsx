@@ -1,4 +1,20 @@
-import { Box, Heading, VStack, Text, Link, Icon, IconButton, Checkbox } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  VStack,
+  Text,
+  Link,
+  Icon,
+  IconButton,
+  Checkbox,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuOptionGroup,
+  MenuItemOption,
+  Button,
+} from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   MdHourglassEmpty,
@@ -26,17 +42,28 @@ const statusIconMap = {
   wrong: { icon: MdClose, color: "red.500" },
 };
 
+const statusOptions = [
+  { value: "pending", label: "Pending" },
+  { value: "waiting", label: "Waiting" },
+  { value: "none", label: "Not Started" },
+  { value: "correct", label: "Correct" },
+  { value: "wrong", label: "Wrong" },
+];
+
 function TasksList() {
   const tasks = useTasksStore((state) => state.tasks);
   const submissions = useSubmissionsStore((state) => state.submissions);
   const teamId = useUserStore((state) => state.teamId);
-  const userId = useUserStore((state) => state.user?.uid );
+  const userId = useUserStore((state) => state.user?.uid);
   const [queuedSubmissions, setQueuedSubmissions] = useState([]);
   const faves = useFavouritesStore((state) => state.faves);
   const addFave = useFavouritesStore((state) => state.addFave);
   const removeFave = useFavouritesStore((state) => state.removeFave);
+  const [selectedStatuses, setSelectedStatuses] = useState(
+    statusOptions.map((opt) => opt.value)
+  );
   const [showOnlyFaves, setShowOnlyFaves] = useState(false);
-  console.log(faves)
+
   // Load queued submissions from Dexie on mount
   useEffect(() => {
     async function fetchQueued() {
@@ -50,12 +77,22 @@ function TasksList() {
     fetchQueued();
   }, [teamId, submissions]);
 
-  // Filter tasks if showOnlyFaves is checked
-  const displayedTasks = showOnlyFaves
-    ? tasks.filter((task) =>
-        faves.some((f) => f.userId === userId && f.taskId === task.id)
-      )
-    : tasks;
+  // Filter tasks by favourites and status
+  const displayedTasks = tasks.filter((task) => {
+    // Favourite filter
+    if (
+      showOnlyFaves &&
+      !faves.some((f) => f.userId === userId && f.taskId === task.id)
+    ) {
+      return false;
+    }
+    // Status filter
+    const submission =
+      submissions.find((sub) => sub.taskId === task.id) ||
+      queuedSubmissions.find((sub) => sub.taskId === task.id);
+    const status = submission ? submission.status : "none";
+    return selectedStatuses.includes(status);
+  });
 
   return (
     <>
@@ -63,14 +100,34 @@ function TasksList() {
         <Heading size="lg" color="primary.500" flex="1">
           Tasks
         </Heading>
-        <Checkbox
-          colorScheme="yellow"
-          isChecked={showOnlyFaves}
-          onChange={(e) => setShowOnlyFaves(e.target.checked)}
-          ml={4}
-        >
-          Show only favourites
-        </Checkbox>
+        <Menu closeOnSelect={false}>
+          <MenuButton as={Button} colorScheme="yellow" ml={4}>
+            Filter
+          </MenuButton>
+          <MenuList minWidth="240px">
+            <MenuOptionGroup
+              type="checkbox"
+              value={showOnlyFaves ? ["faves"] : []}
+              onChange={(vals) => setShowOnlyFaves(vals.includes("faves"))}
+            >
+              <MenuItemOption value="faves">
+                Show only favourites
+              </MenuItemOption>
+            </MenuOptionGroup>
+            <MenuOptionGroup
+              title="Statuses"
+              type="checkbox"
+              value={selectedStatuses}
+              onChange={(vals) => setSelectedStatuses(vals)}
+            >
+              {statusOptions.map((opt) => (
+                <MenuItemOption key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItemOption>
+              ))}
+            </MenuOptionGroup>
+          </MenuList>
+        </Menu>
       </Box>
 
       <VStack align="stretch" spacing={2} pb={2}>
@@ -175,7 +232,11 @@ function TasksList() {
                   width="100%"
                 >
                   <IconButton
-                    aria-label={isFave ? "Remove from favourites" : "Add to favourites"}
+                    aria-label={
+                      isFave
+                        ? "Remove from favourites"
+                        : "Add to favourites"
+                    }
                     icon={
                       isFave ? (
                         <Icon as={MdStar} color="yellow.400" boxSize={6} />
