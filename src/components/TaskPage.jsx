@@ -28,14 +28,21 @@ const crosshairIcon = new L.Icon({
 
 function FitBounds({ markerPos, userPos }) {
   const map = useMap();
+  const [hasFitBounds, setHasFitBounds] = useState(false);
+
   useEffect(() => {
-    if (markerPos && userPos) {
+    if (!hasFitBounds && markerPos && userPos) {
       const bounds = L.latLngBounds([markerPos, userPos]);
       map.fitBounds(bounds, { padding: [20, 20] });
-    } else if (markerPos) {
+      setHasFitBounds(true);
+    } else if (!hasFitBounds && markerPos) {
       map.setView(markerPos, 15);
+      setHasFitBounds(true);
     }
+    // Only run on first load
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markerPos, userPos, map]);
+
   return null;
 }
 
@@ -155,6 +162,8 @@ function TaskPage() {
           borderRadius="md"
           overflow="hidden"
           boxShadow="sm"
+          position="relative"
+          pb={8} // Add padding to the bottom for the overlay
         >
           <MapContainer
             center={markerPos}
@@ -174,9 +183,21 @@ function TaskPage() {
             <FitBounds markerPos={markerPos} userPos={userPos} />
           </MapContainer>
           {distance !== null && task.hasGPS && (
-            <Text fontSize="sm" color="blue.500">
-              Distance to marker: {distance.toFixed(1)} metres
-            </Text>
+            <Box
+              position="absolute"
+              bottom={4} // Increased from 2 for more space
+              left={4} // Increased from 2 for more space
+              bg="white"
+              px={3}
+              py={1}
+              borderRadius="md"
+              boxShadow="lg"
+              fontSize="sm"
+              color="blue.500"
+              zIndex={1000} // Increased zIndex to ensure visibility
+            >
+              Distance to marker: {distance.toFixed(1)} m
+            </Box>
           )}
         </Box>
       )}
