@@ -10,6 +10,7 @@ import {
   TileLayer,
   CircleMarker,
   Marker,
+  Polyline,
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -180,6 +181,18 @@ function TaskPage() {
               fillOpacity={1}
             />
             {userPos && <Marker position={userPos} icon={crosshairIcon} />}
+            {/* Add dashed line if both positions exist */}
+            {markerPos && userPos && (
+              <Polyline
+                positions={[markerPos, userPos]}
+                pathOptions={{
+                  color: "blue",
+                  weight: 1,
+                  dashArray: "6 6",
+                  opacity: 0.7,
+                }}
+              />
+            )}
             <FitBounds markerPos={markerPos} userPos={userPos} />
           </MapContainer>
           {distance !== null && task.hasGPS && (
