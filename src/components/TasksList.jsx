@@ -32,6 +32,7 @@ import { useSubmissionsStore } from "../stores/submissionsStore";
 import queuedDb from "../stores/queuedSubmissions";
 import { useUserStore } from "../stores/userStore";
 import { useFavouritesStore } from "../stores/favouritesStore";
+import { useFiltersStore } from "../stores/filtersStore";
 
 // Status icon mapping
 const statusIconMap = {
@@ -59,10 +60,10 @@ function TasksList() {
   const faves = useFavouritesStore((state) => state.faves);
   const addFave = useFavouritesStore((state) => state.addFave);
   const removeFave = useFavouritesStore((state) => state.removeFave);
-  const [selectedStatuses, setSelectedStatuses] = useState(
-    statusOptions.map((opt) => opt.value)
-  );
-  const [showOnlyFaves, setShowOnlyFaves] = useState(false);
+  const selectedStatuses = useFiltersStore((state) => state.selectedStatuses);
+  const setSelectedStatuses = useFiltersStore((state) => state.setSelectedStatuses);
+  const showOnlyFaves = useFiltersStore((state) => state.showOnlyFaves);
+  const setShowOnlyFaves = useFiltersStore((state) => state.setShowOnlyFaves);
 
   // Load queued submissions from Dexie on mount
   useEffect(() => {
