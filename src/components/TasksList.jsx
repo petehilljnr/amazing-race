@@ -1,4 +1,4 @@
-import { Box, Heading, VStack, Text, Link, Icon, IconButton } from "@chakra-ui/react";
+import { Box, Heading, VStack, Text, Link, Icon, IconButton, Checkbox } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   MdHourglassEmpty,
@@ -35,6 +35,7 @@ function TasksList() {
   const faves = useFavouritesStore((state) => state.faves);
   const addFave = useFavouritesStore((state) => state.addFave);
   const removeFave = useFavouritesStore((state) => state.removeFave);
+  const [showOnlyFaves, setShowOnlyFaves] = useState(false);
   console.log(faves)
   // Load queued submissions from Dexie on mount
   useEffect(() => {
@@ -49,17 +50,36 @@ function TasksList() {
     fetchQueued();
   }, [teamId, submissions]);
 
+  // Filter tasks if showOnlyFaves is checked
+  const displayedTasks = showOnlyFaves
+    ? tasks.filter((task) =>
+        faves.some((f) => f.userId === userId && f.taskId === task.id)
+      )
+    : tasks;
+
   return (
     <>
-      <Heading size="lg" color="primary.500" mb={2}>
-        Tasks
-      </Heading>
+      <Box display="flex" alignItems="center" mb={2}>
+        <Heading size="lg" color="primary.500" flex="1">
+          Tasks
+        </Heading>
+        <Checkbox
+          colorScheme="yellow"
+          isChecked={showOnlyFaves}
+          onChange={(e) => setShowOnlyFaves(e.target.checked)}
+          ml={4}
+        >
+          Show only favourites
+        </Checkbox>
+      </Box>
 
       <VStack align="stretch" spacing={2} pb={2}>
-        {tasks.length === 0 ? (
-          <Text color="midGrey.500">No tasks available.</Text>
+        {displayedTasks.length === 0 ? (
+          <Text color="midGrey.500">
+            {showOnlyFaves ? "No favourite tasks." : "No tasks available."}
+          </Text>
         ) : (
-          tasks.map((task) => {
+          displayedTasks.map((task) => {
             // Find submission in either submissions or queuedSubmissions
             const submission =
               submissions.find((sub) => sub.taskId === task.id) ||
