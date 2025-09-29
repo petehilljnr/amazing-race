@@ -1,18 +1,21 @@
-import { Box, Heading, VStack, Text, Link, Icon } from "@chakra-ui/react";
+import { Box, Heading, VStack, Text, Link, Icon, IconButton } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   MdHourglassEmpty,
   MdNotStarted,
   MdDoneAll,
   MdClose,
-  MdHourglassTop, // For "waiting"
+  MdHourglassTop,
+  MdStar,
+  MdStarBorder,
 } from "react-icons/md";
 import { useEffect, useState } from "react";
 
 import { useTasksStore } from "../stores/tasksStore";
 import { useSubmissionsStore } from "../stores/submissionsStore";
-import queuedDb from "../stores/queuedSubmissions"; // Import Dexie queued submissions DB
+import queuedDb from "../stores/queuedSubmissions";
 import { useUserStore } from "../stores/userStore";
+import { useFavouritesStore } from "../stores/favouritesStore";
 
 // Status icon mapping
 const statusIconMap = {
@@ -20,15 +23,19 @@ const statusIconMap = {
   waiting: { icon: MdHourglassTop, color: "red.300" },
   none: { icon: MdNotStarted, color: "midGrey.500" },
   correct: { icon: MdDoneAll, color: "green.500" },
-  wrong: { icon: MdClose, color: "softRed.500" },
+  wrong: { icon: MdClose, color: "red.500" },
 };
 
 function TasksList() {
   const tasks = useTasksStore((state) => state.tasks);
   const submissions = useSubmissionsStore((state) => state.submissions);
   const teamId = useUserStore((state) => state.teamId);
+  const userId = useUserStore((state) => state.user?.uid );
   const [queuedSubmissions, setQueuedSubmissions] = useState([]);
-
+  const faves = useFavouritesStore((state) => state.faves);
+  const addFave = useFavouritesStore((state) => state.addFave);
+  const removeFave = useFavouritesStore((state) => state.removeFave);
+  console.log(faves)
   // Load queued submissions from Dexie on mount
   useEffect(() => {
     async function fetchQueued() {
@@ -68,6 +75,20 @@ function TasksList() {
             if (score >= 3 && score <= 6) scoreColor = "gray.400"; // silver (3-6)
             if (score >= 7) scoreColor = "yellow.400"; // gold (7+)
 
+            // Favourite logic
+            const isFave = faves.some(
+              (f) => f.userId === userId && f.taskId === task.id
+            );
+            const handleFaveClick = (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (isFave) {
+                removeFave(userId, task.id);
+              } else {
+                addFave({ userId, taskId: task.id });
+              }
+            };
+
             return (
               <Box
                 key={task.id}
@@ -75,7 +96,10 @@ function TasksList() {
                 borderRadius="md"
                 bg="paleGrey.500"
                 position="relative"
+                display="flex"
+                flexDirection="column"
               >
+                {/* Score circle stays top right */}
                 <Box
                   position="absolute"
                   top={3}
@@ -88,8 +112,8 @@ function TasksList() {
                     borderRadius="full"
                     bg={scoreColor}
                     color="white"
-                    minW={8}
-                    h={8}
+                    minW={7}
+                    h={7}
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
@@ -114,12 +138,35 @@ function TasksList() {
                       color={statusIconProps.color}
                       boxSize={6}
                       mr={2}
+                      mt={0}
                     />
                     {task.name || "Untitled Task"}
                   </Link>
                   <Text fontSize="sm" color="black.500" mt={1}>
                     {task.description || "No description provided."}
                   </Text>
+                </Box>
+                {/* Footer with star icon aligned right */}
+                <Box
+                  mt={2}
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="center"
+                  width="100%"
+                >
+                  <IconButton
+                    aria-label={isFave ? "Remove from favourites" : "Add to favourites"}
+                    icon={
+                      isFave ? (
+                        <Icon as={MdStar} color="yellow.400" boxSize={6} />
+                      ) : (
+                        <Icon as={MdStarBorder} color="gray.400" boxSize={6} />
+                      )
+                    }
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleFaveClick}
+                  />
                 </Box>
               </Box>
             );

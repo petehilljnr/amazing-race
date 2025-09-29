@@ -27,6 +27,8 @@ function App() {
   const setSubmissions = useSubmissionsStore((state) => state.setSubmissions);
   const teamId = useUserStore((state) => state.teamId);
   const isOnline = useOnlineStatus();
+  const a = useUserStore()
+  console.log(a)
 
   useEffect(() => {
     if (isAuthenticated) {
