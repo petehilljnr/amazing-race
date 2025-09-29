@@ -1,6 +1,10 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Heading, Text, VStack, Button } from "@chakra-ui/react";
 import { useTasksStore } from "../stores/tasksStore";
+import { useUserStore } from "../stores/userStore";
+import { useSubmissionsStore } from "../stores/submissionsStore";
+import queuedDb from "../stores/queuedSubmissions";
 import {
   MapContainer,
   TileLayer,
@@ -9,13 +13,11 @@ import {
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
 import { useLiveLocation } from "../utils/location";
 import L from "leaflet";
 import crosshairSvg from "../assets/crosshair.svg";
 import { getDistanceMeters } from "../utils/distance";
 import { upsertQueuedSubmission } from "../stores/queuedSubmissions";
-import { useUserStore } from "../stores/userStore";
 import { prepareImage } from "../utils/photoCompress";
 
 const crosshairIcon = new L.Icon({
@@ -41,10 +43,33 @@ function TaskPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const task = useTasksStore((state) => state.tasks.find((t) => t.id === id));
-  const userLocation = useLiveLocation({ enableHighAccuracy: true });
-  const [userAnswer, setUserAnswer] = useState("");
   const teamId = useUserStore((state) => state.teamId);
+  const submissions = useSubmissionsStore((state) => state.submissions);
+  const [userAnswer, setUserAnswer] = useState("");
+  const userLocation = useLiveLocation({ enableHighAccuracy: true });
 
+  useEffect(() => {
+    async function checkSubmission() {
+      if (!id || !teamId) return;
+
+      // Check existing submissions in Zustand
+      const existingSubmission = submissions.find(
+        (s) => s.taskId === id && s.teamId === teamId
+      );
+
+      if (existingSubmission) {
+        setUserAnswer(existingSubmission.answer || "");
+        return;
+      }
+
+      // Check queued submissions in Dexie
+      const queued = await queuedDb.queuedSubmissions.get([id, teamId]);
+      if (queued && queued.answer) {
+        setUserAnswer(queued.answer);
+      }
+    }
+    checkSubmission();
+  }, [id, teamId, submissions]);
 
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
@@ -67,6 +92,7 @@ function TaskPage() {
       teamId,
       answerType: task.answerType,
       answer: userAnswer,
+      status: "waiting",
       modifiedTime: Date.now(),
     };
     await upsertQueuedSubmission(submission);
@@ -102,7 +128,6 @@ function TaskPage() {
     markerPos && userPos
       ? getDistanceMeters(markerPos[0], markerPos[1], userPos[0], userPos[1])
       : null;
-
 
   // Example: get teamId and taskId from props, store, or context
   // For demonstration, assuming taskId from task.id and teamId from userStore
