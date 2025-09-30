@@ -26,4 +26,4 @@ dist-ssr
 *.cache
 stats.html
 # Firebase Hosting cache
-.firebase/
+.firebase/*
