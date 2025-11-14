@@ -78,22 +78,29 @@ function TasksList() {
     fetchQueued();
   }, [teamId, submissions]);
 
-  // Filter tasks by favourites and status
-  const displayedTasks = tasks.filter((task) => {
-    // Favourite filter
-    if (
-      showOnlyFaves &&
-      !faves.some((f) => f.userId === userId && f.taskId === task.id)
-    ) {
-      return false;
-    }
-    // Status filter
-    const submission =
-      submissions.find((sub) => sub.taskId === task.id) ||
-      queuedSubmissions.find((sub) => sub.taskId === task.id);
-    const status = submission ? submission.status : "none";
-    return selectedStatuses.includes(status);
-  });
+  // Filter and sort tasks by favourites and status
+  const displayedTasks = tasks
+    .filter((task) => {
+      // Favourite filter
+      if (
+        showOnlyFaves &&
+        !faves.some((f) => f.userId === userId && f.taskId === task.id)
+      ) {
+        return false;
+      }
+      // Status filter
+      const submission =
+        submissions.find((sub) => sub.taskId === task.id) ||
+        queuedSubmissions.find((sub) => sub.taskId === task.id);
+      const status = submission ? submission.status : "none";
+      return selectedStatuses.includes(status);
+    })
+    .sort((a, b) => {
+      // Sort by rowID (convert to number for proper numeric sorting)
+      const rowA = parseInt(a.rowID) || 0;
+      const rowB = parseInt(b.rowID) || 0;
+      return rowA - rowB;
+    });
 
   return (
     <>
@@ -150,8 +157,8 @@ function TasksList() {
             let score = task.points;
             if (score === undefined || score === null) score = 1;
             let scoreColor = "orange.700"; // bronze (<=2)
-            if (score >= 3 && score <= 6) scoreColor = "gray.400"; // silver (3-6)
-            if (score >= 7) scoreColor = "yellow.400"; // gold (7+)
+            if (score >= 5 && score <= 8) scoreColor = "gray.400"; // silver (5-8)
+            if (score >= 9) scoreColor = "yellow.400"; // gold (8+)
 
             // Favourite logic
             const isFave = faves.some(
@@ -218,7 +225,7 @@ function TasksList() {
                       mr={2}
                       mt={0}
                     />
-                    {task.name || "Untitled Task"}
+                    {'#' + (task.rowID || '') + ' - ' + (task.name || "Untitled Task") }
                   </Link>
                   <Text fontSize="sm" color="black.500" mt={1}>
                     {task.description || "No description provided."}

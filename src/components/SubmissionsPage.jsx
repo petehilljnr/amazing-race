@@ -19,7 +19,7 @@ function SubmissionsPage() {
   // Helper to get score from tasks
   const getTaskScore = (taskId) => {
     const task = tasks.find(t => t.id === taskId);
-    return task?.points ?? 1;
+    return parseInt(task?.points) ?? 1;
   };
 
   // Tally for "correct"
@@ -32,7 +32,7 @@ function SubmissionsPage() {
   const waitingCount = waitingSubs.length;
   const waitingPoints = waitingSubs.reduce((sum, sub) => sum + getTaskScore(sub.taskId), 0);
 
-  const totalPossiblePoints = correctPoints + waitingPoints;
+  const totalPossiblePoints = parseInt(correctPoints) + parseInt(waitingPoints);
 
   return (
     <>

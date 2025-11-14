@@ -155,6 +155,11 @@ function TaskPage() {
       <Text fontSize="md" color="black.500">
         {task.description || "No description provided."}
       </Text>
+      {task.hint && (
+        <Text fontSize="sm" color="gray.600" fontStyle="italic">
+          Hint: {task.hint}
+        </Text>
+      )}
       {/* Add more task details here as needed */}
       {task.hasGPS && markerPos && (
         <Box
@@ -270,26 +275,18 @@ function TaskPage() {
           )}
         </Box>
       )}
-      <Box
-        position="fixed"
-        left={0}
-        bottom={0}
-        w="100%"
-        p={4}
-        bg="white"
-        boxShadow="md"
-        zIndex={100}
+
+      {/* Submit button - now inline with content */}
+      <Button
+        colorScheme="primary"
+        width="100%"
+        size="lg"
+        mt={4}
+        isDisabled={!isSubmitEnabled}
+        onClick={handleSubmit}
       >
-        <Button
-          colorScheme="primary"
-          width="100%"
-          size="lg"
-          isDisabled={!isSubmitEnabled}
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-      </Box>
+        Submit
+      </Button>
     </VStack>
   );
 }

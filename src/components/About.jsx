@@ -2,9 +2,9 @@ import { Box, Heading, Text, VStack, HStack, Icon, Divider } from '@chakra-ui/re
 import { MdHourglassEmpty, MdHourglassTop, MdNotStarted, MdDoneAll, MdClose, MdStar } from "react-icons/md";
 
 const pointsInfo = [
-  { points: "1 to 3", description: "Easy task completed correctly", bg: "orange.700", color: "white" },
-  { points: "4 to 6", description: "Medium task completed correctly", bg: "gray.400", color: "white" },
-  { points: "7 to 10", description: "Hard task completed correctly", bg: "yellow.400", color: "white" },
+  { points: "1 to 4", description: "Easy task completed correctly", bg: "orange.700", color: "white" },
+  { points: "5 to 8", description: "Medium task completed correctly", bg: "gray.400", color: "white" },
+  { points: ">= 9", description: "Hard task completed correctly", bg: "yellow.400", color: "white" },
 
 ];
 
